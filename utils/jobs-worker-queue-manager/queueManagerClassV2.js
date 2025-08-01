@@ -17,7 +17,7 @@ constructor(url, options) {
   // if the connection is closed or fails to be established at all, we will reconnect
   this.amqpConn = null;
 
-  this.url = url  || "amqp://localhost";
+  this.url = url  || process.env.AMQP_URL || process.env.RABBITMQ_URL || "amqp://rabbitmq:5672";
   // process.env.CLOUDAMQP_URL + "?heartbeat=60"
 
   // this.exchange = 'amq.topic';

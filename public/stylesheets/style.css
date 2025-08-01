@@ -4,5 +4,30 @@ body {
 }
 
 a {
-  color: #00B7FF;
+  color: #FF6600; /* Changed to orange */
 }
+
+/* SMARTBOT color scheme */
+.smartbot-orange {
+  color: #FF6600;
+}
+
+.smartbot-gray {
+  color: #808080;
+}
+
+.smartbot-black {
+  color: #000000;
+}
+
+/* Background colors */
+.smartbot-orange-bg {
+  background-color: #FF6600;
+}
+
+.smartbot-gray-bg {
+  background-color: #808080;
+}
+
+.smartbot-black-bg {
+  background-color: #000000;

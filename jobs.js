@@ -1,4 +1,8 @@
 var dotenvPath = undefined;
+process.env.AMQP_URL = process.env.AMQP_URL || 'amqp://rabbitmq:5672';
+process.env.REDIS_URL || 'redis://redis:6379'
+process.env.MONGODB_URI || 'mongodb://mongodb:27017/tiledesk'
+process.env.AMQP_URL || 'amqp://rabbitmq:5672'
 
 if (process.env.DOTENV_PATH) {
   dotenvPath = process.env.DOTENV_PATH;
@@ -34,7 +38,7 @@ if (!process.env.AMQP_URL) {
 }
 
 // Desactivar worker
-process.env.JOB_WORKER_ENABLED = false;
+// process.env.JOB_WORKER_ENABLED = false; // Commented out to allow docker-compose.yml to set this variable
 
 var databaseUri = process.env.DATABASE_URI || process.env.MONGODB_URI || config.database;
 var autoIndex = true;

@@ -1,4 +1,9 @@
 var dotenvPath = undefined;
+process.env.AMQP_URL = process.env.AMQP_URL || 'amqp://rabbitmq:5672';
+process.env.REDIS_URL || 'redis://redis:6379'
+process.env.MONGODB_URI || 'mongodb://mongodb:27017/tiledesk'
+process.env.AMQP_URL || 'amqp://rabbitmq:5672'
+
 
 if (process.env.DOTENV_PATH) {
   dotenvPath = process.env.DOTENV_PATH;

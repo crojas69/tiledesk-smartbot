@@ -10,8 +10,9 @@ const authEvent = require('../../event/authEvent');
 
 // if the connection is closed or fails to be established at all, we will reconnect
 var amqpConn = null;
-var url = process.env.CLOUDAMQP_URL + "?heartbeat=60" || "amqp://localhost";
+var url = process.env.AMQP_URL + "?heartbeat=60" || process.env.RABBITMQ_URL + "?heartbeat=60" || "amqp://rabbitmq:5672";
 // attento devi aggiornare configMap di PRE E PROD
+// var url = process.env.CLOUDAMQP_URL + "?heartbeat=60" || "amqp://localhost";
 // var url = process.env.AMQP_URL + "?heartbeat=60" || "amqp://localhost";
 
 // MOD0
