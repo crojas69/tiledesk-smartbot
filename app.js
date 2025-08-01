@@ -1,21 +1,26 @@
 var dotenvPath = undefined;
-process.env.AMQP_URL = process.env.AMQP_URL || 'amqp://rabbitmq:5672';
-process.env.REDIS_URL || 'redis://redis:6379'
-process.env.MONGODB_URI || 'mongodb://mongodb:27017/tiledesk'
-process.env.AMQP_URL || 'amqp://rabbitmq:5672'
 
-
+// Load environment variables from .env file
 if (process.env.DOTENV_PATH) {
   dotenvPath = process.env.DOTENV_PATH;
   console.log("load dotenv form DOTENV_PATH", dotenvPath);
-}
-
-if (process.env.LOAD_DOTENV_SUBFOLDER ) {
+} else if (process.env.LOAD_DOTENV_SUBFOLDER) {
   console.log("load dotenv form LOAD_DOTENV_SUBFOLDER");
   dotenvPath = __dirname+'/confenv/.env';
+} else {
+  // Default to .env file in current directory
+  dotenvPath = __dirname+'/.env';
 }
 
-require('dotenv').config({ path: dotenvPath});
+// Load the dotenv configuration
+require('dotenv').config({ path: dotenvPath });
+
+// Set default values for environment variables if not loaded from .env
+process.env.AMQP_URL = process.env.AMQP_URL || 'amqp://guest:guest@rabbitmq:5672';
+process.env.REDIS_URL = process.env.REDIS_URL || 'redis://redis:6379';
+process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb://mongodb:27017/tiledesk';
+process.env.CACHE_REDIS_HOST = process.env.CACHE_REDIS_HOST || 'redis';
+process.env.CACHE_REDIS_PORT = process.env.CACHE_REDIS_PORT || '6379';
 
 
 var express = require('express');
@@ -332,17 +337,25 @@ if (process.env.DISABLE_SESSION_STRATEGY==true ||  process.env.DISABLE_SESSION_S
       // redisClient.connect().catch(console.error)
 
       let cacheClient = undefined;
-      if (pubModulesManager.cache) {
+      if (pubModulesManager && pubModulesManager.cache) {
         cacheClient = pubModulesManager.cache._cache._cache;  //_cache._cache to jump directly to redis modules without cacheoose wrapper (don't support await)
       }
-      // winston.info("Express Session cacheClient",cacheClient);
-
+      
+      // Create Redis client for session store if cacheClient is not available
+      const redis = require('redis');
+      if (!cacheClient) {
+        const redisUrl = process.env.REDIS_URL || 'redis://redis:6379';
+        console.log("Creating new Redis client for session store with URL:", redisUrl);
+        cacheClient = redis.createClient({ url: redisUrl });
+        cacheClient.connect().catch(err => {
+          console.error("Failed to connect to Redis for session store:", err);
+        });
+      }
 
       let redisStore = new RedisStore({
         client: cacheClient,
         prefix: "sessions:",
       })
-
 
       app.use(
         session({
@@ -351,9 +364,10 @@ if (process.env.DISABLE_SESSION_STRATEGY==true ||  process.env.DISABLE_SESSION_S
           saveUninitialized: false, // recommended: only save session when data exists
           secret: sessionSecret,
           cookie: {
-            secure: true,           // ✅ Use HTTPS
+            secure: false,          // Set to false for development/HTTP
             httpOnly: true,         // ✅ Only accessible by the server (not client-side JS)
-            sameSite: 'None'        // ✅ Allows cross-origin (e.g., Keycloak on a different domain)
+            sameSite: 'Lax',        // ✅ Allows cross-origin (e.g., Keycloak on a different domain)
+            maxAge: 1000 * 60 * 60 * 24 * 7 // 1 week
           }
         })
       )

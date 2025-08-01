@@ -12,12 +12,16 @@ class TdCache {
     async connect(callback) {
         // client = redis.createClient();
         return new Promise( async (resolve, reject) => {
-            this.client = redis.createClient(
-                {
-                    host: this.redis_host,
-                    port: this.redis_port,
-                    password: this.redis_password
-                });
+            // Create Redis connection URL
+            let redisUrl = `redis://${this.redis_host}:${this.redis_port}`;
+            if (this.redis_password) {
+                redisUrl = `redis://:${this.redis_password}@${this.redis_host}:${this.redis_port}`;
+            }
+            
+            this.client = redis.createClient({
+                url: redisUrl
+            });
+            
             this.client.on('error', err => {
                 reject(err);
                 if (callback) {
@@ -34,6 +38,8 @@ class TdCache {
                 }
                 //console.log("Redis is ready.");
             });
+            
+            await this.client.connect();
         });
     }
 
