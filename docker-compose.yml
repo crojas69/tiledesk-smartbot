@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:5.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  redis:
+    image: redis:7
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  tiledesk:
+    build: .
+    container_name: tiledesk
+    restart: always
+    depends_on:
+      - mongodb
+      - redis
+      - rabbitmq
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URI=mongodb://mongodb:27017/tiledesk
+      - CACHE_REDIS_HOST=redis
+      - CACHE_REDIS_PORT=6379
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - AMQP_URL=amqp://rabbitmq:5672
+      - TDLOG_LEVEL=debug
+      - JOB_WORKER_ENABLED=true
+      - ENABLE_REDIS_SESSION=true
+      - SESSION_SECRET=tiledesk_secret
+      - ENABLE_ACCESSLOG=true
+      - JSON_BODY_LIMIT=1mb
+
+volumes:
+  mongodb_data: {}

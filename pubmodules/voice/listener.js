@@ -25,7 +25,7 @@ class Listener {
         var port = process.env.CACHE_REDIS_PORT || 6379;
         winston.debug("Redis port: "+ port);
 
-        var host = process.env.CACHE_REDIS_HOST || "127.0.0.1"
+        var host = process.env.CACHE_REDIS_HOST || "redis"
         winston.debug("Redis host: "+ host);
 
         var password = process.env.CACHE_REDIS_PASSWORD;

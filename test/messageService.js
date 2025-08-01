@@ -36,7 +36,7 @@ var { QuoteManager } = require('../services/QuoteManager');
 // CONNECT REDIS - CHECK IT
 const { TdCache } = require('../utils/TdCache');
 let tdCache = new TdCache({
-  host: '127.0.0.1',
+  host: process.env.REDIS_HOST || 'redis',
   port: '6379'
 });
 
