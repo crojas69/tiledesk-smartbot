@@ -10,5 +10,6 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["node", "bin/www"]
+HEALTHCHECK --interval=10s --timeout=5s --start-period=5s CMD curl --fail http://localhost:3000/ || exit 1
 
+CMD ["node", "bin/www"]
