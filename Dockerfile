@@ -1,5 +1,12 @@
 # Imagen base moderna con soporte TLS actualizado
-FROM node:16.17.0
+FROM node:16.17.0-bullseye
+
+# Actualizar lista de repositorios e instalar certificados raíz para conexiones HTTPS/TLS seguras
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Carpeta de trabajo
 WORKDIR /usr/src/app
@@ -9,10 +16,6 @@ COPY package*.json ./
 
 # Instalar solo dependencias necesarias para producción
 RUN npm install --production
-
-# Instalar certificados raíz para conexiones HTTPS/TLS seguras
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl \
-  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copiar el resto del código fuente
 COPY . .

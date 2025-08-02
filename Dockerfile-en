@@ -1,11 +1,14 @@
-FROM node:20-bookworm
-
-RUN sed -i 's/stable\/updates/stable-security\/updates/' /etc/apt/sources.list
-
-RUN apt-get update
+FROM node:20-bookworm-slim
 
 # Create app directory
 WORKDIR /usr/src/app
+
+# Update package repositories and install required packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # Accept build arguments
 ARG NPM_TOKEN
