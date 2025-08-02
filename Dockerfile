@@ -1,5 +1,5 @@
 # Imagen base moderna con soporte TLS actualizado
-FROM node:20-bookworm
+FROM node:16.17.0
 
 # Carpeta de trabajo
 WORKDIR /usr/src/app
@@ -13,9 +13,6 @@ RUN npm install --production
 # Instalar certificados raíz para conexiones HTTPS/TLS seguras
 RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-RUN apt-get update && apt-get install -y ca-certificates curl
-
 
 # Copiar el resto del código fuente
 COPY . .

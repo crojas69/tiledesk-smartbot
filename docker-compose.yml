@@ -47,6 +47,10 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URI: mongodb://mongodb:27017/tiledesk
+      MONGODB_SSL: "false"
+      MONGODB_SSL_VALIDATE: "false"
+      MONGODB_TLS_ALLOW_INVALID_CERTIFICATES: "true"
+      MONGODB_TLS_ALLOW_INVALID_HOSTNAMES: "true"
       REDIS_URL: redis://redis:6379
       CACHE_REDIS_HOST: redis
       CACHE_REDIS_PORT: 6379

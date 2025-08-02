@@ -20,7 +20,8 @@ require('dotenv').config({ path: dotenvPath });
 // Set default values for environment variables if not loaded from .env
 process.env.AMQP_URL = process.env.AMQP_URL || 'amqp://guest:guest@rabbitmq-s8xa.onrender.com:5672';
 process.env.REDIS_URL = process.env.REDIS_URL || 'redis://red-d26ll8ggjchc73e3ua30:6379';
-process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://iabot:CV08QX0qKF3bI56n@cluster0.vmlhxmi.mongodb.net/mydb?retryWrites=true&w=majority&tls=true&appName=Cluster0';
+// Don't override MONGODB_URI if it's already set (e.g., from docker-compose.yml)
+process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb://mongodb:27017/tiledesk';
 process.env.CACHE_REDIS_HOST = process.env.CACHE_REDIS_HOST || 'redis';
 process.env.CACHE_REDIS_PORT = process.env.CACHE_REDIS_PORT || '6379';
 
@@ -37,6 +38,7 @@ var passport = require('passport');
 require('./middleware/passport')(passport);
 
 var config = require('./config/database');
+var mongodbConfig = require('./config/mongodb');
 var cors = require('cors');
 var Project = require("./models/project");
 var validtoken = require('./middleware/valid-token');
@@ -79,7 +81,14 @@ if (process.env.MONGOOSE_AUTOINDEX) {
 
 winston.info("DB AutoIndex: " + autoIndex);
 
-var connection = mongoose.connect(databaseUri, { "useNewUrlParser": true, "autoIndex": autoIndex }, function(err) {
+// Get connection options based on the URI
+var connectionOptions = mongodbConfig.getConnectionOptions(databaseUri);
+// Add autoIndex option
+connectionOptions.autoIndex = autoIndex;
+
+winston.info("DB Connection Options: " + JSON.stringify(connectionOptions));
+
+var connection = mongoose.connect(databaseUri, connectionOptions, function(err) {
   if (err) { 
     winston.error('Failed to connect to MongoDB on ' + databaseUri + " ", err);
     process.exit(1);
@@ -91,7 +100,7 @@ if (process.env.MONGOOSE_DEBUG==="true") {
 }
 mongoose.set('useFindAndModify', false); // https://mongoosejs.com/docs/deprecations.html#-findandmodify-
 mongoose.set('useCreateIndex', true);
-mongoose.set('useUnifiedTopology', false); 
+mongoose.set('useUnifiedTopology', true); // Use unified topology for better connection handling
 
 // CONNECT REDIS - CHECK IT
 const { TdCache } = require('./utils/TdCache');
