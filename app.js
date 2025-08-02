@@ -1,3 +1,5 @@
+console.log("🚀 Iniciando app.js...");
+
 var dotenvPath = undefined;
 
 // Load environment variables from .env file
@@ -16,9 +18,9 @@ if (process.env.DOTENV_PATH) {
 require('dotenv').config({ path: dotenvPath });
 
 // Set default values for environment variables if not loaded from .env
-process.env.AMQP_URL = process.env.AMQP_URL || 'amqp://guest:guest@rabbitmq:5672';
-process.env.REDIS_URL = process.env.REDIS_URL || 'redis://redis:6379';
-process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb://mongodb:27017/tiledesk';
+process.env.AMQP_URL = process.env.AMQP_URL || 'amqp://guest:guest@rabbitmq-s8xa.onrender.com:5672';
+process.env.REDIS_URL = process.env.REDIS_URL || 'redis://red-d26ll8ggjchc73e3ua30:6379';
+process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://iabot:CV08QX0qKF3bI56n@cluster0.vmlhxmi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 process.env.CACHE_REDIS_HOST = process.env.CACHE_REDIS_HOST || 'redis';
 process.env.CACHE_REDIS_PORT = process.env.CACHE_REDIS_PORT || '6379';
 
