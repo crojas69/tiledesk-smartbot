@@ -1,8 +1,18 @@
-var dotenvPath = undefined;
-process.env.AMQP_URL = process.env.AMQP_URL || 'amqp://rabbitmq:5672';
-process.env.REDIS_URL || 'redis://redis:6379'
-process.env.MONGODB_URI || 'mongodb://mongodb:27017/tiledesk'
-process.env.AMQP_URL || 'amqp://rabbitmq:5672'
+require('dotenv').config({ path: dotenvPath });
+
+process.env.DATABASE_URI = process.env.DATABASE_URI || 'mongodb+srv://iabot:CV08QX0qKF3bI56n@cluster0.vmlhxmi.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+process.env.MONGODB_URI = process.env.MONGODB_URI || process.env.DATABASE_URI;
+
+process.env.REDIS_URL = process.env.REDIS_URL || 'redis://redis:6379';
+process.env.CACHE_REDIS_HOST = process.env.CACHE_REDIS_HOST || 'redis';
+process.env.CACHE_REDIS_PORT = process.env.CACHE_REDIS_PORT || '6379';
+
+process.env.RABBITMQ_URL = process.env.RABBITMQ_URL || 'amqp://guest:guest@rabbitmq:5672';
+process.env.AMQP_URL = process.env.AMQP_URL || process.env.RABBITMQ_URL;
+process.env.RABBITMQ_HOST = process.env.RABBITMQ_HOST || 'rabbitmq';
+process.env.RABBITMQ_PORT = process.env.RABBITMQ_PORT || '5672';
+
+process.env.SESSION_SECRET = process.env.SESSION_SECRET || 'tiledesk_secret';
 
 if (process.env.DOTENV_PATH) {
   dotenvPath = process.env.DOTENV_PATH;
